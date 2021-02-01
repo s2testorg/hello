@@ -1,0 +1,18 @@
+name: Automation
+on:
+  repository_dispatch:
+    types: [foo]
+jobs:
+  fixture:
+    runs-on: ubuntu-latest
+    name: "job"
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '12'
+      - name: Call foo()
+        run: node ./.github/workflows/handler.js "$NAME" "$PAYLOAD"
+        env:
+          NAME: ${{ github.event.action }}
+          PAYLOAD: ${{ toJson(github.event.client_payload) }}
